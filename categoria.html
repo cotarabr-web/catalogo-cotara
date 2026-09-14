@@ -23,6 +23,24 @@
     </div>
   </section>
 
+  <div class="modal-overlay" id="produto-overlay" hidden>
+    <div class="modal modal--produto" id="produto-modal" role="dialog" aria-modal="true" aria-labelledby="produto-titulo" tabindex="-1">
+      <button class="modal__fechar" id="produto-fechar" type="button" aria-label="Fechar">×</button>
+      <div class="produto-detalhe">
+        <div class="produto-detalhe__img" id="produto-detalhe-img"></div>
+        <div class="produto-detalhe__corpo">
+          <h2 id="produto-titulo" class="produto-detalhe__nome"></h2>
+          <span class="produto-detalhe__preco" id="produto-detalhe-preco"></span>
+          <p class="produto-detalhe__desc" id="produto-detalhe-desc"></p>
+          <div class="produto-detalhe__acoes">
+            <button class="entrada__add" id="produto-detalhe-add" type="button">Adicionar ao carrinho</button>
+            <button class="entrada__whats" id="produto-detalhe-whats" type="button">Comprar no WhatsApp</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <button class="cart-fab" id="cart-fab" type="button" aria-label="Ver carrinho">
     🛒<span class="cart-fab__badge" id="cart-badge">0</span>
   </button>

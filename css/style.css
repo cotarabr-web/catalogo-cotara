@@ -183,9 +183,9 @@ a:focus-visible {
   max-width: 1160px;
   margin: 0 auto;
   padding: 64px 24px 96px;
-  background: rgba(247, 243, 236, 0.78);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(247, 243, 236, 0.45);
+  backdrop-filter: blur(26px);
+  -webkit-backdrop-filter: blur(26px);
 }
 
 /* só na landing: leve sobreposição decorativa na borda do hero — o vidro em
@@ -231,6 +231,7 @@ a:focus-visible {
   border-radius: 14px;
   overflow: hidden;
   box-shadow: 0 2px 14px rgba(31, 61, 43, 0.07);
+  cursor: pointer;
 }
 
 .entrada__img {
@@ -549,6 +550,71 @@ a:focus-visible {
   box-shadow: none;
 }
 
+/* ---------- Modal de detalhe do produto ---------- */
+
+.modal--produto {
+  max-width: 640px;
+}
+
+.produto-detalhe {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.produto-detalhe__img {
+  width: 200px;
+  flex-shrink: 0;
+  aspect-ratio: 1 / 1;
+  border-radius: 12px;
+  background-color: var(--verde-salvia-claro);
+  background-size: cover;
+  background-position: center;
+}
+
+.produto-detalhe__corpo {
+  flex: 1;
+  min-width: 0;
+  padding-top: 4px;
+}
+
+.produto-detalhe__nome {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 1.5rem;
+  line-height: 1.25;
+  color: var(--texto);
+  margin: 0 0 8px;
+  padding-right: 32px;
+}
+
+.produto-detalhe__preco {
+  display: block;
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--verde-profundo);
+  margin-bottom: 16px;
+}
+
+.produto-detalhe__desc {
+  font-size: 0.95rem;
+  color: var(--texto-suave);
+  line-height: 1.6;
+  margin: 0 0 24px;
+}
+
+.produto-detalhe__acoes {
+  display: flex;
+  gap: 10px;
+}
+
+.produto-detalhe__acoes .entrada__add,
+.produto-detalhe__acoes .entrada__whats {
+  flex: 1;
+  padding: 12px;
+  font-size: 0.9rem;
+}
+
 /* ---------- Carrinho ---------- */
 
 .cart-fab {
@@ -852,6 +918,15 @@ a:focus-visible {
   .wireframe-wrap {
     width: min(180px, 55vw);
     margin: 0 auto;
+  }
+
+  .produto-detalhe {
+    flex-direction: column;
+  }
+
+  .produto-detalhe__img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
   }
 
   .cart-fab {

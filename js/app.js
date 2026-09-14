@@ -13,7 +13,7 @@
 
 function produtoLinhaHTML(produto) {
   return `
-    <article class="entrada">
+    <article class="entrada" data-nome="${produto.nome}">
       <div class="entrada__img" style="background-image:url('${produto.img}')"></div>
       <div class="entrada__corpo">
         <h3 class="entrada__nome">${produto.nome}</h3>
@@ -161,6 +161,60 @@ function criarFocoTrap(container, aoFechar) {
     },
   };
 }
+
+/* ---------- Modal de detalhe do produto ----------
+ * Qualquer .entrada é clicável (landing e categoria.html) — abre esse modal
+ * com descLonga, preço e os mesmos botões de ação do card. Os botões dentro
+ * do modal reaproveitam as classes .entrada__add/.entrada__whats — os
+ * listeners delegados dessas classes (mais abaixo neste arquivo) já
+ * funcionam pra qualquer elemento com essa classe, então não precisa
+ * duplicar a lógica de adicionar ao carrinho / abrir WhatsApp aqui. */
+(function initDetalheProduto() {
+  const overlay = document.getElementById("produto-overlay");
+  const modal = document.getElementById("produto-modal");
+  const fecharBtn = document.getElementById("produto-fechar");
+  const imgEl = document.getElementById("produto-detalhe-img");
+  const tituloEl = document.getElementById("produto-titulo");
+  const precoEl = document.getElementById("produto-detalhe-preco");
+  const descEl = document.getElementById("produto-detalhe-desc");
+  const addBtn = document.getElementById("produto-detalhe-add");
+  const whatsBtn = document.getElementById("produto-detalhe-whats");
+
+  if (!overlay || !modal || typeof produtos === "undefined") return;
+
+  const trap = criarFocoTrap(modal, fecharDetalhe);
+
+  function abrirDetalhe(nome) {
+    const produto = produtos.find((p) => p.nome === nome);
+    if (!produto) return;
+
+    imgEl.style.backgroundImage = `url('${produto.img}')`;
+    tituloEl.textContent = produto.nome;
+    precoEl.textContent = `R$ ${produto.preco}`;
+    descEl.textContent = produto.descLonga || produto.desc;
+    addBtn.dataset.nome = produto.nome;
+    whatsBtn.dataset.nome = produto.nome;
+
+    overlay.hidden = false;
+    trap.abrir();
+  }
+
+  function fecharDetalhe() {
+    overlay.hidden = true;
+    trap.fechar();
+  }
+
+  document.addEventListener("click", (e) => {
+    if (e.target.closest(".entrada__acoes")) return;
+    const card = e.target.closest(".entrada[data-nome]");
+    if (card) abrirDetalhe(card.dataset.nome);
+  });
+
+  fecharBtn.addEventListener("click", fecharDetalhe);
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) fecharDetalhe();
+  });
+})();
 
 /* ---------- Modal de busca por sintoma ---------- */
 
