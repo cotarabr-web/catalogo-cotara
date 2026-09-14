@@ -52,7 +52,7 @@ Mapeamento sugerido de áreas do corpo (agrupando as tags `doencas` que já exis
 "Cuidados Pessoais" e os tipos de produto (Extratos, Óleos Vegetais, Óleos Essenciais) ficam de fora do wireframe — ativam como atalho manual na pílula, não como sintoma.
 
 ### 3.3 Página de categoria
-- Produtos curados pro sintoma: nome, descrição (reescrita, compliance), preço, adicionar ao carrinho.
+- Produtos curados pro sintoma: nome, descrição (reescrita, compliance), preço, adicionar ao carrinho. Cada card também tem um botão secundário "Comprar no WhatsApp" pra interesse num produto só, sem passar pelo carrinho (Fase 9).
 
 ### 3.4 Carrinho
 - Confirmado: fecha pedido via **WhatsApp**, sem checkout/pagamento online. Reaproveitar a lógica do site antigo (`montarMensagem()`, `finalizar()`) quase 1:1 — essa parte já funciona bem.
@@ -70,6 +70,22 @@ Mapeamento sugerido de áreas do corpo (agrupando as tags `doencas` que já exis
 - **Imagem final (hero-frasco-ambar.png):** aprovada, proporção widescreen (~16:9), frasco centralizado com bastante negative space no céu (pro headline) e nas laterais (montanhas, boas pra hero full-width em telas grandes).
 - **Paleta:** manter verde-profundo/verde-sálvia como cor de marca (CTA, badges, elementos de interface), deixando o calor da fotografia (dourado/âmbar) carregar o clima do hero. Não é pra brigar com a foto — a paleta antiga do site atual pode seguir valendo pra UI, só não pro hero.
 - Wireframe do corpo: line art, minimalista, técnico — confinado ao modal (seção 3.2).
+
+- **Headline do hero (Fase 9):** só "Cotara" (wordmark), `font-size: clamp(3.4rem, 12vw, 7rem)` — a frase original ("Bem-estar, do jeito que a natureza pretendia.") virou `<meta name="description">` no `<head>` (SEO, invisível na página).
+
+- **Fundo fixo no site inteiro (revisado depois da Fase 9 — decisão explícita do usuário).** A Fase 9 original usava `position: sticky` escopado a um wrapper de 160vh especificamente pra EVITAR ter a imagem do hero fixa atrás da rolagem inteira (custo de repintura de `backdrop-filter`). O usuário pediu o oposto — quis a imagem como fundo persistente do site inteiro (escopo confirmado com ele: só `index.html`, `categoria.html` continua com fundo creme sólido), escurecendo conforme rola pra revelar os produtos em glassmorphism. Implementado assim:
+  - `.site-fundo` (`position: fixed; inset:0; z-index:-1`) — a imagem + `.hero__overlay` (gradiente estático de legibilidade) + `.hero__veu` (camada escura cuja opacidade é controlada por JS).
+  - `.hero-primeiro-plano` (headline + pílula) virou conteúdo normal de novo — só um bloco de ~100vh no topo da página, sem posicionamento especial; rola e some como qualquer coisa.
+  - **Por que precisou de JS (só aqui):** um `position: fixed` sempre mostra o mesmo enquadramento da tela, não "cresce" com a altura da página — um gradiente CSS estático não sabe a que ponto da rolagem o usuário chegou. Só dá pra ligar a opacidade do véu à posição de rolagem via JS. `dimirFundoAoRolar()` em `app.js`: listener de `scroll` passivo + `requestAnimationFrame` (não any-frame direto, throttled), rampa a opacidade do véu de 0 a 0.85 ao longo do primeiro viewport de rolagem, depois mantém — sem tentar recalcular nada durante o resto da lista de 68 produtos.
+  - **Achado real de performance ao testar:** com o fundo nunca soltando (ao contrário da Fase 9), backdrop-filter duplicado — no painel `.produtos` E em cada um dos 68 `.entrada` — mais o Ken Burns rodando pra sempre, travou o navegador de verdade (timeout de avaliação JS de 45s durante o teste). Corrigido com duas mudanças, não só reduzir blur:
+    1. **Removido `backdrop-filter` dos 68 cards individuais** — só o painel `.produtos` borra o fundo; os cards ficam com fundo translúcido simples (`rgba(255,255,255,0.72)`, sem blur próprio) porque o que está atrás deles já foi borrado uma vez pelo painel — borrar de novo por card era custo redundante sem diferença visível.
+    2. **Ken Burns pausa via `animation-play-state` assim que o véu chega em opacidade máxima** (`imgHero.style.animationPlayState = "paused"`) — uma animação rodando pra sempre atrás de uma camada com backdrop-filter força recomposição do blur a cada frame mesmo parado na tela; congelar a imagem (já quase encoberta pelo véu nesse ponto) resolve.
+  - Depois dessas duas mudanças, rolagem real testada sem travamento (JS respondeu instantaneamente depois de rolar até o fim da lista). Vale reconfirmar num celular físico antes do deploy — a automação de browser não mede FPS real de GPU.
+  - Botão "Comprar no WhatsApp" por produto (landing e categoria.html): mensagem `'Olá!\nTenho interesse no produto: ' + nome`, mesmo formato do site antigo, não mexe no carrinho.
+
+- **"Cotara" atrás do frasco — testado e revertido.** Chegou a ser implementado (headline gigante centralizada + recorte do frasco via Adobe `image_remove_background` sobreposto com z-index maior, fade no scroll) — o usuário viu ao vivo e achou "feio demais", pediu pra voltar ao modelo anterior. Revertido por completo: `.hero__content` de volta a `position:relative; padding:12vh 24px 0` (headline no topo, não centralizada atrás do frasco), `font-size` de volta a `clamp(3.4rem,12vw,7rem)`, sem fade de texto no scroll. `design-references/hero-frasco-cutout.png` removido (não é mais referenciado em lugar nenhum). Não reabrir essa direção sem pedido explícito novo.
+
+- **Catálogo: grade de cards individuais (decisão final do usuário).** A `/frontend-design` tinha experimentado um índice alfabético tipo field guide (linhas separadas por fio, divisores de letra grandes, sem caixa por produto) — o usuário viu e pediu pra voltar: cada produto no seu próprio "quadradinho" (card com fundo, borda e sombra), sem agrupamento por letra inicial, botões "+ Adicionar" e "WhatsApp" lado a lado (não empilhados). Estrutura atual: `.produtos__lista` é grid (`repeat(auto-fill, minmax(220px,1fr))`), cada produto é `.entrada` (card com imagem quadrada no topo, corpo com nome/desc/preço, e `.entrada__acoes` com os dois botões em flex row, 50/50). Sem divisores de letra — removidos de propósito. Função de render: `produtoLinhaHTML()` em `js/app.js`, reaproveitada por `categoria.js`. Paleta e tipografia continuam as mesmas (verde-profundo/verde-sálvia, Playfair/Manrope).
 
 ## 5. Dados
 

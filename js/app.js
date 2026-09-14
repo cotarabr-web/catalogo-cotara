@@ -7,23 +7,41 @@
  * Fase 7: estado do carrinho movido pra sessionStorage (ver seção 3.4/6 do
  * CLAUDE.md) — sobrevive à navegação entre páginas na mesma aba, some ao
  * fechar a aba. Decisão revista em relação à Fase 6 (que previa só memória).
+ * Grade de cards por produto (voltou a pedido do usuário — a versão anterior
+ * agrupava por letra inicial num índice tipo field guide, revertida).
  */
 
-function produtoCardHTML(produto) {
+function produtoLinhaHTML(produto) {
   return `
-    <article class="produto-card">
-      <div class="produto-card__img" style="background-image:url('${produto.img}')"></div>
-      <div class="produto-card__corpo">
-        <h3 class="produto-card__nome">${produto.nome}</h3>
-        <p class="produto-card__desc">${produto.desc}</p>
-        <span class="produto-card__preco">R$ ${produto.preco}</span>
-        <button class="produto-card__add" type="button" data-nome="${produto.nome}">
-          + Adicionar ao carrinho
-        </button>
+    <article class="entrada">
+      <div class="entrada__img" style="background-image:url('${produto.img}')"></div>
+      <div class="entrada__corpo">
+        <h3 class="entrada__nome">${produto.nome}</h3>
+        <p class="entrada__desc">${produto.desc}</p>
+        <span class="entrada__preco">R$ ${produto.preco}</span>
+        <div class="entrada__acoes">
+          <button class="entrada__add" type="button" data-nome="${produto.nome}">
+            + Adicionar
+          </button>
+          <button class="entrada__whats" type="button" data-nome="${produto.nome}">
+            WhatsApp
+          </button>
+        </div>
       </div>
     </article>
   `;
 }
+
+/* ---------- Comprar produto único via WhatsApp (não mexe no carrinho) ---------- */
+
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest(".entrada__whats");
+  if (!btn) return;
+  const msg = encodeURIComponent(
+    "Olá!\nTenho interesse no produto: " + btn.dataset.nome
+  );
+  window.open(`https://wa.me/5562984803759?text=${msg}`, "_blank");
+});
 
 function renderListaProdutos() {
   const grid = document.getElementById("produtos-grid");
@@ -33,7 +51,15 @@ function renderListaProdutos() {
     a.nome.localeCompare(b.nome, "pt-BR")
   );
 
-  grid.innerHTML = ordenados.map(produtoCardHTML).join("");
+  grid.innerHTML = ordenados.map(produtoLinhaHTML).join("");
+
+  const titulo = document.querySelector(".produtos__titulo");
+  if (titulo) {
+    titulo.insertAdjacentHTML(
+      "beforeend",
+      ` <span class="produtos__contagem">${ordenados.length} produtos</span>`
+    );
+  }
 }
 
 renderListaProdutos();
@@ -45,6 +71,46 @@ document.querySelectorAll(".pill-nav__item[data-slug]").forEach((btn) => {
     window.location.href = `categoria.html?area=${btn.dataset.slug}`;
   });
 });
+
+/* ---------- Fundo fixo: escurece conforme rola pra ver os produtos ----------
+ * .site-fundo é fixed (cobre sempre o mesmo enquadramento da tela, não
+ * "acompanha" a altura da página) — um gradiente CSS não sabe a que altura
+ * o usuário rolou, então só dá pra ligar a opacidade do véu à rolagem via
+ * JS. Listener passivo + rAF pra não travar o scroll. */
+(function dimirFundoAoRolar() {
+  const veu = document.getElementById("hero-veu");
+  const imgHero = document.querySelector(".hero__img");
+  if (!veu) return;
+
+  let pendente = false;
+
+  function atualizar() {
+    const progresso = Math.min(window.scrollY / window.innerHeight, 1);
+    veu.style.opacity = (progresso * 0.85).toFixed(2);
+
+    // Ken Burns continua rodando pra sempre atrás de um painel com
+    // backdrop-filter forçaria recomposição do blur a cada frame, mesmo
+    // parado — trava o scroll em celular. Congela a imagem assim que sai
+    // de cena (quase encoberta pelo véu de qualquer forma).
+    if (imgHero) {
+      imgHero.style.animationPlayState = progresso >= 1 ? "paused" : "running";
+    }
+
+    pendente = false;
+  }
+
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (pendente) return;
+      pendente = true;
+      requestAnimationFrame(atualizar);
+    },
+    { passive: true }
+  );
+
+  atualizar();
+})();
 
 /* ---------- Foco: trap reaproveitável por modal de sintoma e drawer do carrinho ---------- */
 
@@ -333,9 +399,9 @@ function criarFocoTrap(container, aoFechar) {
     toastTimer = setTimeout(() => toast.classList.remove("is-visivel"), 2200);
   }
 
-  // ---- adicionar ao carrinho a partir de qualquer produto-card (landing ou categoria) ----
+  // ---- adicionar ao carrinho a partir de qualquer entrada (landing ou categoria) ----
   document.addEventListener("click", (e) => {
-    const addBtn = e.target.closest(".produto-card__add");
+    const addBtn = e.target.closest(".entrada__add");
     if (addBtn) adicionar(addBtn.dataset.nome);
   });
 

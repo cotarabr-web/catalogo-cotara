@@ -33,12 +33,31 @@ button {
   font-family: inherit;
 }
 
-/* ---------- Hero ---------- */
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--verde-salvia);
+  outline-offset: 2px;
+}
 
-.hero {
-  position: relative;
-  height: 100vh;
-  min-height: 560px;
+/* ---------- Fundo fixo do site (só landing) ----------
+ * A imagem do hero fica fixa atrás da página inteira (não só do hero) —
+ * pedido explícito do usuário, escopo confirmado: só index.html. Isso
+ * reverte a decisão de performance da Fase 9 (sticky escopado, que soltava
+ * o fundo depois da transição pra não recalcular blur pelo resto da
+ * rolagem) — aqui o fundo nunca solta, então os 68 cards com backdrop-filter
+ * seguem sobre ele o tempo todo. Testado em 390px; se travar em aparelho
+ * real, reduzir blur de .produtos/.entrada primeiro.
+ *
+ * .hero__veu escurece progressivamente via JS (scroll listener leve, rAF-
+ * throttled em app.js) — um gradiente estático não dá conta disso porque
+ * o fundo é fixed (sempre mostra o mesmo enquadramento, não "cresce" com a
+ * página), então só JS consegue ligar a opacidade à posição de rolagem.
+ */
+
+.site-fundo {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
   overflow: hidden;
   background: var(--verde-profundo);
 }
@@ -73,6 +92,19 @@ button {
   );
 }
 
+.hero__veu {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 18, 12, 1);
+  opacity: 0;
+}
+
+.hero-primeiro-plano {
+  position: relative;
+  height: 100vh;
+  min-height: 560px;
+}
+
 .hero__content {
   position: relative;
   z-index: 1;
@@ -85,8 +117,9 @@ button {
   max-width: min(20ch, 85vw);
   font-family: var(--font-serif);
   font-weight: 600;
-  font-size: clamp(1.6rem, 4.5vw, 3.2rem);
-  line-height: 1.25;
+  font-size: clamp(3.4rem, 12vw, 7rem);
+  letter-spacing: 0.01em;
+  line-height: 1;
   color: var(--branco);
   text-shadow: 0 2px 24px rgba(0, 0, 0, 0.35);
   overflow-wrap: break-word;
@@ -124,11 +157,12 @@ button {
   background: transparent;
   cursor: pointer;
   white-space: nowrap;
-  transition: background 0.2s ease;
+  transition: background 0.2s ease, transform 0.15s ease;
 }
 
 .pill-nav__item:hover {
   background: rgba(255, 255, 255, 0.18);
+  transform: translateY(-1px);
 }
 
 .pill-nav__item--cta {
@@ -144,9 +178,23 @@ button {
 /* ---------- Lista de produtos ---------- */
 
 .produtos {
+  position: relative;
+  z-index: 2;
   max-width: 1160px;
   margin: 0 auto;
   padding: 64px 24px 96px;
+  background: rgba(247, 243, 236, 0.78);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* só na landing: leve sobreposição decorativa na borda do hero — o vidro em
+   si já revela o fundo fixo (.site-fundo) por trás durante toda a rolagem,
+   não só aqui. */
+#produtos {
+  margin-top: -24px;
+  border-radius: 32px 32px 0 0;
+  box-shadow: 0 -24px 48px rgba(0, 0, 0, 0.12);
 }
 
 .produtos__titulo {
@@ -157,30 +205,43 @@ button {
   margin: 0 0 32px;
 }
 
-.produtos__grid {
+.produtos__contagem {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: var(--texto-suave);
+  vertical-align: middle;
+}
+
+.produtos__lista {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 24px;
+  gap: 20px;
 }
 
-.produto-card {
+.entrada {
   display: flex;
   flex-direction: column;
-  background: var(--branco);
-  border: 1px solid rgba(31, 61, 43, 0.08);
-  border-radius: 12px;
+  /* sem backdrop-filter aqui de propósito: o painel .produtos já borra o
+     fundo fixo uma vez por trás de tudo; repetir o blur em cada um dos 68
+     cards é o que estourava o orçamento de GPU em mobile (ver seção 4 do
+     CLAUDE.md) sem diferença visível — o card só precisa do tom translúcido. */
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 14px;
   overflow: hidden;
+  box-shadow: 0 2px 14px rgba(31, 61, 43, 0.07);
 }
 
-.produto-card__img {
-  aspect-ratio: 1 / 1;
+.entrada__img {
   width: 100%;
+  aspect-ratio: 1 / 1;
   background-color: var(--verde-salvia-claro);
   background-size: cover;
   background-position: center;
 }
 
-.produto-card__corpo {
+.entrada__corpo {
   padding: 16px;
   display: flex;
   flex-direction: column;
@@ -188,40 +249,62 @@ button {
   flex: 1;
 }
 
-.produto-card__nome {
+.entrada__nome {
+  font-family: var(--font-serif);
   font-weight: 600;
-  font-size: 0.98rem;
+  font-size: 1.02rem;
+  line-height: 1.3;
   color: var(--texto);
 }
 
-.produto-card__desc {
-  font-size: 0.85rem;
-  color: var(--texto-suave);
-  line-height: 1.4;
-  flex: 1;
-}
-
-.produto-card__preco {
+.entrada__preco {
   font-weight: 700;
   font-size: 0.95rem;
   color: var(--verde-profundo);
 }
 
-.produto-card__add {
-  margin-top: 4px;
-  padding: 10px;
-  border: none;
-  border-radius: 10px;
-  background: var(--verde-salvia);
-  color: var(--branco);
-  font-weight: 600;
+.entrada__desc {
   font-size: 0.85rem;
+  color: var(--texto-suave);
+  line-height: 1.45;
+  flex: 1;
+}
+
+.entrada__acoes {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.entrada__add,
+.entrada__whats {
+  flex: 1;
+  padding: 10px 8px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.78rem;
   cursor: pointer;
   transition: background 0.2s ease;
 }
 
-.produto-card__add:hover {
+.entrada__add {
   background: var(--verde-profundo);
+  color: var(--branco);
+}
+
+.entrada__add:hover {
+  background: #16291b;
+}
+
+.entrada__whats {
+  background: var(--verde-salvia-claro);
+  color: var(--verde-profundo);
+}
+
+.entrada__whats:hover {
+  background: var(--verde-salvia);
+  color: var(--branco);
 }
 
 /* ---------- Página de categoria ---------- */
@@ -461,7 +544,7 @@ button {
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
-  transition: background 0.2s ease, opacity 0.2s ease;
+  transition: background 0.2s ease, opacity 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .modal__confirmar:disabled {
@@ -471,6 +554,13 @@ button {
 
 .modal__confirmar:not(:disabled):hover {
   background: var(--verde-profundo);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(31, 61, 43, 0.3);
+}
+
+.modal__confirmar:not(:disabled):active {
+  transform: translateY(0);
+  box-shadow: none;
 }
 
 /* ---------- Carrinho ---------- */
@@ -488,11 +578,17 @@ button {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   font-size: 1.3rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.cart-fab:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
 }
 
 .cart-fab__badge {
@@ -685,7 +781,7 @@ button {
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
-  transition: background 0.2s ease, opacity 0.2s ease;
+  transition: background 0.2s ease, opacity 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .cart-checkout:disabled {
@@ -695,6 +791,13 @@ button {
 
 .cart-checkout:not(:disabled):hover {
   background: var(--verde-profundo);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(31, 61, 43, 0.3);
+}
+
+.cart-checkout:not(:disabled):active {
+  transform: translateY(0);
+  box-shadow: none;
 }
 
 /* ---------- Toast ---------- */
@@ -724,8 +827,9 @@ button {
 /* ---------- Responsivo ---------- */
 
 @media (max-width: 680px) {
-  .hero {
+  .hero-primeiro-plano {
     height: 92vh;
+    min-height: 460px;
   }
 
   .hero__content {
@@ -735,6 +839,13 @@ button {
   .pill-nav {
     bottom: 5%;
     padding: 8px;
+  }
+
+  /* backdrop-filter em 68 cards + painel é o ponto mais caro em celular —
+     blur menor aqui, testado em 390px (seção 9.5 do CLAUDE.md). */
+  .produtos {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
   }
 
   .pill-nav__item {

@@ -1,7 +1,7 @@
 /*
  * CATEGORIA — página de destino do modal de sintoma e dos atalhos manuais.
  * Lê ?area=<slug> da URL, cruza com areasCorpo e filtra produtos.js pela
- * interseção de doencas[] com tags[]. Reaproveita produtoCardHTML (js/app.js).
+ * interseção de doencas[] com tags[]. Reaproveita produtoLinhaHTML (js/app.js).
  */
 
 (function renderCategoria() {
@@ -36,5 +36,11 @@
     return;
   }
 
-  gridEl.innerHTML = filtrados.map(produtoCardHTML).join("");
+  gridEl.innerHTML = filtrados.map(produtoLinhaHTML).join("");
+  tituloEl.insertAdjacentHTML(
+    "beforeend",
+    ` <span class="produtos__contagem">${filtrados.length} ${
+      filtrados.length === 1 ? "produto" : "produtos"
+    }</span>`
+  );
 })();

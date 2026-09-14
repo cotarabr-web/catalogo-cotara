@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Bem-estar, do jeito que a natureza pretendia.">
   <title>Cotara — Catálogo</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,12 +12,15 @@
 </head>
 <body>
 
-  <section class="hero">
-    <img class="hero__img" src="design-references/hero-frasco-ambar.png" alt="Frasco de vidro âmbar de extrato Cotara sobre rocha coberta de musgo, em campo de grama ao entardecer">
+  <div class="site-fundo" id="site-fundo" aria-hidden="true">
+    <img class="hero__img" src="design-references/hero-frasco-ambar.png" alt="">
     <div class="hero__overlay"></div>
+    <div class="hero__veu" id="hero-veu"></div>
+  </div>
 
+  <div class="hero-primeiro-plano">
     <div class="hero__content">
-      <h1 class="hero__headline">Bem-estar, do jeito que a natureza pretendia.</h1>
+      <h1 class="hero__headline">Cotara</h1>
     </div>
 
     <nav class="pill-nav" aria-label="Navegação principal">
@@ -26,11 +30,11 @@
       <button class="pill-nav__item" type="button" data-slug="intestino-digestao">Intestino</button>
       <button class="pill-nav__item" type="button" data-slug="imunidade-garganta">Imunidade</button>
     </nav>
-  </section>
+  </div>
 
   <section class="produtos" id="produtos">
     <h2 class="produtos__titulo">Todos os produtos</h2>
-    <div class="produtos__grid" id="produtos-grid">
+    <div class="produtos__lista" id="produtos-grid">
       <!-- preenchido via js/app.js a partir de js/produtos.js -->
     </div>
   </section>
