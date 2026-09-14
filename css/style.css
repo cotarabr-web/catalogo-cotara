@@ -165,6 +165,10 @@ a:focus-visible {
   transform: translateY(-1px);
 }
 
+.pill-nav__item:active {
+  transform: translateY(0) scale(0.97);
+}
+
 .pill-nav__item--cta {
   background: var(--verde-salvia);
   color: var(--branco);
@@ -232,6 +236,16 @@ a:focus-visible {
   overflow: hidden;
   box-shadow: 0 2px 14px rgba(31, 61, 43, 0.07);
   cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.entrada:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 28px rgba(31, 61, 43, 0.14);
+}
+
+.entrada:active {
+  transform: translateY(-1px) scale(0.99);
 }
 
 .entrada__img {
@@ -286,7 +300,12 @@ a:focus-visible {
   font-weight: 600;
   font-size: 0.78rem;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.entrada__add:active,
+.entrada__whats:active {
+  transform: scale(0.96);
 }
 
 .entrada__add {
@@ -383,10 +402,15 @@ a:focus-visible {
   font-size: 1.3rem;
   line-height: 1;
   cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
 }
 
 .modal__fechar:hover {
   background: rgba(31, 61, 43, 0.16);
+}
+
+.modal__fechar:active {
+  transform: scale(0.9);
 }
 
 .modal__titulo {
@@ -671,6 +695,10 @@ a:focus-visible {
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
 }
 
+.cart-fab:active {
+  transform: translateY(0) scale(0.94);
+}
+
 .cart-fab__badge {
   position: absolute;
   top: -4px;
@@ -744,10 +772,15 @@ a:focus-visible {
   font-size: 1.3rem;
   line-height: 1;
   cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
 }
 
 .cart-fechar:hover {
   background: rgba(31, 61, 43, 0.16);
+}
+
+.cart-fechar:active {
+  transform: scale(0.9);
 }
 
 .cart-itens {
@@ -966,5 +999,27 @@ a:focus-visible {
 
   .cart-painel {
     padding: 20px;
+  }
+}
+
+/* ---------- Movimento reduzido ----------
+ * Ken Burns do fundo e o pulso do wireframe são as únicas animações
+ * automáticas/contínuas do site (o resto é feedback pontual de clique/hover,
+ * que prefers-reduced-motion não precisa anular). Sem isso, quem pediu
+ * "reduzir movimento" no sistema continuava vendo o fundo balançando pra
+ * sempre atrás da página inteira. */
+@media (prefers-reduced-motion: reduce) {
+  .hero__img {
+    animation: none;
+  }
+
+  .wireframe__figura {
+    animation: none;
+    opacity: 1;
+  }
+
+  .wireframe__figura.is-ativo {
+    animation: none;
+    filter: drop-shadow(0 0 10px rgba(124, 148, 115, 0.9));
   }
 }

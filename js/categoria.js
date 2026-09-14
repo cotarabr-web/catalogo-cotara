@@ -23,7 +23,7 @@
   }
 
   tituloEl.textContent = area.label;
-  document.title = `${area.label} — Cotara`;
+  document.title = `${area.label} - Cotara`;
 
   const filtrados = produtos.filter((p) =>
     p.doencas.some((d) => area.tags.includes(d))
@@ -32,7 +32,7 @@
   if (filtrados.length === 0) {
     gridEl.hidden = true;
     vazioEl.hidden = false;
-    vazioEl.textContent = "Em breve — estamos preparando produtos para essa área.";
+    vazioEl.textContent = "Em breve. Estamos preparando produtos para essa área.";
     return;
   }
 
