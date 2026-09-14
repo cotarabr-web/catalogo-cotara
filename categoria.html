@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cotara — Categoria</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header class="categoria-header">
+    <a class="categoria-header__voltar" href="index.html">← Voltar</a>
+  </header>
+
+  <section class="produtos" id="categoria-conteudo">
+    <h1 class="produtos__titulo" id="categoria-titulo">Carregando…</h1>
+    <p class="categoria__vazio" id="categoria-vazio" hidden></p>
+    <div class="produtos__grid" id="categoria-grid">
+      <!-- preenchido via js/categoria.js a partir de js/produtos.js -->
+    </div>
+  </section>
+
+  <button class="cart-fab" id="cart-fab" type="button" aria-label="Ver carrinho">
+    🛒<span class="cart-fab__badge" id="cart-badge">0</span>
+  </button>
+
+  <div class="cart-overlay" id="cart-overlay" hidden>
+    <aside class="cart-painel" id="cart-painel" role="dialog" aria-modal="true" aria-labelledby="cart-titulo" tabindex="-1">
+      <div class="cart-painel__cabeca">
+        <h2 id="cart-titulo" class="cart-painel__titulo">🛒 Seu carrinho</h2>
+        <button class="cart-fechar" id="cart-fechar" type="button" aria-label="Fechar carrinho">×</button>
+      </div>
+
+      <div class="cart-itens" id="cart-itens"></div>
+
+      <div class="cart-painel__rodape">
+        <div class="cart-linha-total"><span>Total de itens</span><span id="cart-total-itens">0</span></div>
+        <div class="cart-linha-total"><span>Total</span><span id="cart-total-valor">R$ 0,00</span></div>
+        <button class="cart-checkout" id="cart-checkout" type="button" disabled>Finalizar pedido via WhatsApp</button>
+      </div>
+    </aside>
+  </div>
+
+  <div class="toast" id="toast">✅ Produto adicionado ao carrinho!</div>
+
+  <script src="js/produtos.js"></script>
+  <script src="js/areas-corpo.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/categoria.js"></script>
+</body>
+</html>

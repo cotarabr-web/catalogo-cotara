@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cotara — Catálogo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <section class="hero">
+    <img class="hero__img" src="design-references/hero-frasco-ambar.png" alt="Frasco de vidro âmbar de extrato Cotara sobre rocha coberta de musgo, em campo de grama ao entardecer">
+    <div class="hero__overlay"></div>
+
+    <div class="hero__content">
+      <h1 class="hero__headline">Bem-estar, do jeito que a natureza pretendia.</h1>
+    </div>
+
+    <nav class="pill-nav" aria-label="Navegação principal">
+      <button class="pill-nav__item pill-nav__item--cta" type="button" id="cta-sintoma">O que você está sentindo hoje? →</button>
+      <button class="pill-nav__item" type="button" data-slug="hormonios">Hormônios</button>
+      <button class="pill-nav__item" type="button" data-slug="sono-ansiedade">Sono</button>
+      <button class="pill-nav__item" type="button" data-slug="intestino-digestao">Intestino</button>
+      <button class="pill-nav__item" type="button" data-slug="imunidade-garganta">Imunidade</button>
+    </nav>
+  </section>
+
+  <section class="produtos" id="produtos">
+    <h2 class="produtos__titulo">Todos os produtos</h2>
+    <div class="produtos__grid" id="produtos-grid">
+      <!-- preenchido via js/app.js a partir de js/produtos.js -->
+    </div>
+  </section>
+
+  <div class="modal-overlay" id="modal-overlay" hidden>
+    <div class="modal" id="modal-sintoma" role="dialog" aria-modal="true" aria-labelledby="modal-titulo" tabindex="-1">
+      <button class="modal__fechar" id="modal-fechar" type="button" aria-label="Fechar">×</button>
+      <h2 id="modal-titulo" class="modal__titulo">O que você está sentindo hoje?</h2>
+
+      <div class="modal__corpo">
+        <div class="wireframe-wrap" id="wireframe-wrap">
+          <svg class="wireframe" viewBox="0 0 100 200" aria-hidden="true">
+            <g class="wireframe__figura" id="wireframe-figura">
+              <circle cx="50" cy="24" r="20" />
+              <line x1="50" y1="44" x2="50" y2="56" />
+              <path d="M28,56 L72,56 L64,140 L36,140 Z" />
+              <line x1="30" y1="60" x2="14" y2="112" />
+              <line x1="70" y1="60" x2="86" y2="112" />
+              <path d="M36,140 L34,146 Q50,152 66,146 L64,140" />
+              <line x1="44" y1="146" x2="40" y2="196" />
+              <line x1="56" y1="146" x2="60" y2="196" />
+            </g>
+          </svg>
+          <div class="hotspots" id="hotspots"><!-- gerado via js/app.js --></div>
+        </div>
+
+        <ul class="sintomas-lista" id="sintomas-lista"><!-- gerado via js/app.js --></ul>
+      </div>
+
+      <button class="modal__confirmar" id="modal-confirmar" type="button" disabled>Ver produtos →</button>
+    </div>
+  </div>
+
+  <button class="cart-fab" id="cart-fab" type="button" aria-label="Ver carrinho">
+    🛒<span class="cart-fab__badge" id="cart-badge">0</span>
+  </button>
+
+  <div class="cart-overlay" id="cart-overlay" hidden>
+    <aside class="cart-painel" id="cart-painel" role="dialog" aria-modal="true" aria-labelledby="cart-titulo" tabindex="-1">
+      <div class="cart-painel__cabeca">
+        <h2 id="cart-titulo" class="cart-painel__titulo">🛒 Seu carrinho</h2>
+        <button class="cart-fechar" id="cart-fechar" type="button" aria-label="Fechar carrinho">×</button>
+      </div>
+
+      <div class="cart-itens" id="cart-itens"></div>
+
+      <div class="cart-painel__rodape">
+        <div class="cart-linha-total"><span>Total de itens</span><span id="cart-total-itens">0</span></div>
+        <div class="cart-linha-total"><span>Total</span><span id="cart-total-valor">R$ 0,00</span></div>
+        <button class="cart-checkout" id="cart-checkout" type="button" disabled>Finalizar pedido via WhatsApp</button>
+      </div>
+    </aside>
+  </div>
+
+  <div class="toast" id="toast">✅ Produto adicionado ao carrinho!</div>
+
+  <script src="js/produtos.js"></script>
+  <script src="js/areas-corpo.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
