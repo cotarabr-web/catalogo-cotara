@@ -600,7 +600,35 @@ a:focus-visible {
   font-size: 0.95rem;
   color: var(--texto-suave);
   line-height: 1.6;
+  margin: 0 0 8px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+
+.produto-detalhe__desc.is-expandido {
+  display: block;
+  -webkit-line-clamp: unset;
+  overflow: visible;
+}
+
+.produto-detalhe__desc-toggle {
+  display: inline-block;
+  background: none;
+  border: none;
+  padding: 0;
   margin: 0 0 24px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--verde-profundo);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.produto-detalhe__desc-toggle:hover {
+  color: var(--verde-salvia);
 }
 
 .produto-detalhe__acoes {

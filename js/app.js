@@ -177,6 +177,7 @@ function criarFocoTrap(container, aoFechar) {
   const tituloEl = document.getElementById("produto-titulo");
   const precoEl = document.getElementById("produto-detalhe-preco");
   const descEl = document.getElementById("produto-detalhe-desc");
+  const descToggle = document.getElementById("produto-detalhe-desc-toggle");
   const addBtn = document.getElementById("produto-detalhe-add");
   const whatsBtn = document.getElementById("produto-detalhe-whats");
 
@@ -192,12 +193,24 @@ function criarFocoTrap(container, aoFechar) {
     tituloEl.textContent = produto.nome;
     precoEl.textContent = `R$ ${produto.preco}`;
     descEl.textContent = produto.descLonga || produto.desc;
+    descEl.classList.remove("is-expandido");
+    descToggle.hidden = true;
+    descToggle.textContent = "Ler descrição completa";
     addBtn.dataset.nome = produto.nome;
     whatsBtn.dataset.nome = produto.nome;
 
     overlay.hidden = false;
     trap.abrir();
+
+    // só mostra o botão se a descrição realmente estourar as 3 linhas do clamp
+    // (ler scrollHeight/clientHeight já força o layout, não precisa de rAF)
+    descToggle.hidden = descEl.scrollHeight <= descEl.clientHeight + 1;
   }
+
+  descToggle.addEventListener("click", () => {
+    const expandido = descEl.classList.toggle("is-expandido");
+    descToggle.textContent = expandido ? "Ler menos" : "Ler descrição completa";
+  });
 
   function fecharDetalhe() {
     overlay.hidden = true;
