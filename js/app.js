@@ -82,18 +82,36 @@ document.querySelectorAll(".pill-nav__item[data-slug]").forEach((btn) => {
   const imgHero = document.querySelector(".hero__img");
   if (!veu) return;
 
+  const ehVideo = imgHero && imgHero.tagName === "VIDEO";
+  const prefereMenosMovimento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // autoplay não fica declarado no HTML de propósito — só chama play() se
+  // o usuário não pediu "reduzir movimento" no sistema. Assim quem pediu
+  // nunca vê nem o primeiro frame se mexer, só o poster estático.
+  if (ehVideo && !prefereMenosMovimento) {
+    imgHero.play().catch(() => {});
+  }
+
   let pendente = false;
 
   function atualizar() {
     const progresso = Math.min(window.scrollY / window.innerHeight, 1);
     veu.style.opacity = (progresso * 0.85).toFixed(2);
 
-    // Ken Burns continua rodando pra sempre atrás de um painel com
-    // backdrop-filter forçaria recomposição do blur a cada frame, mesmo
-    // parado — trava o scroll em celular. Congela a imagem assim que sai
-    // de cena (quase encoberta pelo véu de qualquer forma).
+    // Ken Burns (fallback <img>) ou o próprio vídeo rodando pra sempre
+    // atrás de um painel com backdrop-filter força recomposição do blur a
+    // cada frame, mesmo com o conteúdo quase encoberto pelo véu — trava o
+    // scroll em celular (já visto com o Ken Burns). Congela/pausa assim
+    // que sai de cena; volta se o usuário rolar de novo pra cima.
     if (imgHero) {
       imgHero.style.animationPlayState = progresso >= 1 ? "paused" : "running";
+      if (ehVideo && !prefereMenosMovimento) {
+        if (progresso >= 1 && !imgHero.paused) {
+          imgHero.pause();
+        } else if (progresso < 1 && imgHero.paused) {
+          imgHero.play().catch(() => {});
+        }
+      }
     }
 
     pendente = false;

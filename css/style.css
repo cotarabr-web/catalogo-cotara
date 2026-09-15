@@ -68,6 +68,13 @@ a:focus-visible {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* Ken Burns é só pro fallback de imagem estática — o hero-video.mp4 já tem
+   movimento de câmera próprio (gravado/gerado), aplicar os dois juntos
+   ficava "over" (zoom duplicado). Se um dia voltar a ser <img>, a
+   animação volta sozinha por causa do seletor de tag. */
+img.hero__img {
   animation: kenburns 26s ease-in-out infinite alternate;
   will-change: transform;
 }
