@@ -133,12 +133,11 @@ img.hero__img {
 }
 
 /* ---------- Pílula de navegação ----------
- * Duas linhas: a de cima é só o CTA de sintoma (funciona como uma "busca
- * guiada", por isso o texto pediu pra tratar como barra de pesquisa —
- * ganhou largura total pra reforçar essa leitura); a de baixo são os
- * atalhos manuais de categoria. A lupa de busca por palavra (busca-fab)
- * fica de propósito FORA da pílula, grudada por fora — não é uma das duas
- * linhas, é um botão satélite. */
+ * Uma linha só, com o CTA de sintoma (a "busca guiada") em largura total —
+ * os atalhos de categoria que moravam numa segunda linha viraram os cards
+ * de .categorias logo abaixo (pílula de 2 linhas ficou "grossa" demais,
+ * voltou a ser só isso). A lupa de busca por palavra (busca-fab) fica de
+ * propósito FORA da pílula, grudada por fora, como um botão satélite. */
 
 .hero-busca-grupo {
   position: absolute;
@@ -156,10 +155,8 @@ img.hero__img {
   flex: 1 1 auto;
   min-width: 0;
   display: flex;
-  flex-direction: column;
-  gap: 8px;
   padding: 10px;
-  border-radius: 28px;
+  border-radius: 999px;
   background: rgba(255, 255, 255, 0.16);
   backdrop-filter: blur(16px) saturate(160%);
   -webkit-backdrop-filter: blur(16px) saturate(160%);
@@ -168,22 +165,6 @@ img.hero__img {
     0 8px 32px rgba(0, 0, 0, 0.18),
     inset 0 1px 0 rgba(255, 255, 255, 0.4),
     inset 0 -1px 0 rgba(255, 255, 255, 0.08);
-}
-
-.pill-nav__linha {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.pill-nav__linha--principal {
-  justify-content: stretch;
-}
-
-.pill-nav__linha--categorias {
-  justify-content: center;
-  padding-top: 8px;
-  border-top: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 .pill-nav__item {
@@ -249,6 +230,84 @@ img.hero__img {
 
 .busca-fab:active {
   transform: translateY(0) scale(0.92);
+}
+
+/* ---------- Categorias em destaque ----------
+ * Cards que cedem espaço um pro outro no hover — adaptado de um efeito de
+ * "painéis que expandem" (referência do usuário). O original usava JS pra
+ * alternar uma classe "aberto"; aqui o mesmo resultado visual sai só de
+ * CSS (:hover muda o flex-grow do card, o flexbox resolve a divisão de
+ * espaço sozinho — não precisa de JS pra isso). Clique sempre navega pro
+ * ?area=<slug> correspondente (mesmo destino que os atalhos da pílula
+ * tinham antes), então funciona igual em touch (sem hover) e no teclado.
+ * Fundo é um gradiente placeholder — cada .categoria-painel pode receber
+ * um `style="background-image:url(...)"` inline quando as fotos estiverem
+ * prontas; o ::before (scrim escuro) já garante contraste do rótulo em
+ * cima de foto sem precisar mexer em mais nada. */
+
+.categorias {
+  position: relative;
+  z-index: 2;
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 24px 40px;
+}
+
+.categorias__paineis {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  height: 220px;
+}
+
+.categoria-painel {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  border: none;
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  padding: 0;
+  background: linear-gradient(160deg, var(--verde-profundo), #101d14);
+  background-size: cover;
+  background-position: center;
+  transition: flex 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.categoria-painel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(10, 18, 12, 0.75) 0%, rgba(10, 18, 12, 0.05) 55%);
+}
+
+.categoria-painel__rotulo {
+  position: absolute;
+  left: 18px;
+  bottom: 16px;
+  z-index: 1;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.85);
+  white-space: nowrap;
+  transition: color 0.3s ease, font-size 0.3s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .categoria-painel:hover {
+    flex: 2.4;
+  }
+
+  .categoria-painel:hover .categoria-painel__rotulo {
+    color: var(--branco);
+    font-size: 1.25rem;
+  }
+}
+
+.categoria-painel:active {
+  transform: scale(0.98);
 }
 
 /* ---------- Lista de produtos ---------- */
@@ -1101,6 +1160,22 @@ img.hero__img {
     width: 42px;
     height: 42px;
     font-size: 1rem;
+  }
+
+  /* sem hover em touch, 4 painéis de largura igual numa linha só ficariam
+     estreitos demais pro rótulo — 2x2 aproveita melhor a largura. */
+  .categorias {
+    padding: 0 16px 32px;
+  }
+
+  .categorias__paineis {
+    flex-wrap: wrap;
+    height: auto;
+  }
+
+  .categoria-painel {
+    flex: 1 1 calc(50% - 5px);
+    height: 130px;
   }
 
   /* backdrop-filter em 68 cards + painel é o ponto mais caro em celular —

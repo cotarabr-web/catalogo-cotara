@@ -25,19 +25,28 @@
 
     <div class="hero-busca-grupo">
       <nav class="pill-nav" aria-label="Navegação principal">
-        <div class="pill-nav__linha pill-nav__linha--principal">
-          <button class="pill-nav__item pill-nav__item--cta" type="button" id="cta-sintoma">O que você está sentindo hoje? →</button>
-        </div>
-        <div class="pill-nav__linha pill-nav__linha--categorias">
-          <button class="pill-nav__item" type="button" data-slug="hormonios">Hormônios</button>
-          <button class="pill-nav__item" type="button" data-slug="sono-ansiedade">Sono</button>
-          <button class="pill-nav__item" type="button" data-slug="intestino-digestao">Intestino</button>
-          <button class="pill-nav__item" type="button" data-slug="imunidade-garganta">Imunidade</button>
-        </div>
+        <button class="pill-nav__item pill-nav__item--cta" type="button" id="cta-sintoma">O que você está sentindo hoje? →</button>
       </nav>
       <button class="busca-fab" id="busca-fab" type="button" aria-label="Pesquisar produtos">🔍</button>
     </div>
   </div>
+
+  <section class="categorias" aria-label="Categorias em destaque">
+    <div class="categorias__paineis">
+      <button class="categoria-painel" type="button" data-slug="hormonios">
+        <span class="categoria-painel__rotulo">Hormônios</span>
+      </button>
+      <button class="categoria-painel" type="button" data-slug="sono-ansiedade">
+        <span class="categoria-painel__rotulo">Sono</span>
+      </button>
+      <button class="categoria-painel" type="button" data-slug="intestino-digestao">
+        <span class="categoria-painel__rotulo">Intestino</span>
+      </button>
+      <button class="categoria-painel" type="button" data-slug="imunidade-garganta">
+        <span class="categoria-painel__rotulo">Imunidade</span>
+      </button>
+    </div>
+  </section>
 
   <section class="produtos" id="produtos">
     <h2 class="produtos__titulo">Todos os produtos</h2>

@@ -64,9 +64,9 @@ function renderListaProdutos() {
 
 renderListaProdutos();
 
-/* ---------- Atalhos manuais da pílula ---------- */
+/* ---------- Categorias em destaque (cards abaixo da pílula) ---------- */
 
-document.querySelectorAll(".pill-nav__item[data-slug]").forEach((btn) => {
+document.querySelectorAll(".categoria-painel[data-slug]").forEach((btn) => {
   btn.addEventListener("click", () => {
     window.location.href = `categoria.html?area=${btn.dataset.slug}`;
   });
