@@ -138,7 +138,7 @@ function criarFocoTrap(container, aoFechar) {
   function focaveis() {
     return Array.from(
       container.querySelectorAll(
-        'button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])'
+        'button:not([disabled]), [href], input:not([disabled]), [tabindex]:not([tabindex="-1"])'
       )
     );
   }
@@ -330,6 +330,111 @@ function criarFocoTrap(container, aoFechar) {
   confirmarBtn.addEventListener("click", () => {
     if (!slugSelecionado) return;
     window.location.href = `categoria.html?area=${slugSelecionado}`;
+  });
+})();
+
+/* ---------- Busca manual por palavra ----------
+ * Botão-lupa fora da pílula (busca-fab) abre um popup com um campo de
+ * texto de verdade. Busca em nome, categoria, tags de sintoma (doencas[])
+ * e nas duas descrições (desc/descLonga) — não só o título — pra "óleos
+ * essenciais" (categoria) e "intestino" (tag de sintoma) funcionarem tão
+ * bem quanto buscar pelo nome do produto. Normaliza acento/caixa dos dois
+ * lados (query e texto indexado) pra "acafrao" achar "Açafrão". Resultados
+ * renderizados com produtoLinhaHTML() dentro de um .produtos__lista comum —
+ * os cliques (abrir detalhe, adicionar, WhatsApp) já funcionam de graça
+ * porque os listeners são delegados no document, não presos a #produtos-grid. */
+(function initBuscaManual() {
+  const fab = document.getElementById("busca-fab");
+  const overlay = document.getElementById("busca-overlay");
+  const modal = document.getElementById("busca-modal");
+  const fecharBtn = document.getElementById("busca-fechar");
+  const input = document.getElementById("busca-input");
+  const dicaEl = document.getElementById("busca-dica");
+  const vazioEl = document.getElementById("busca-vazio");
+  const resultadosEl = document.getElementById("busca-resultados");
+
+  if (!fab || !overlay || !modal || typeof produtos === "undefined") return;
+
+  const trap = criarFocoTrap(modal, fecharBusca);
+
+  function normalizar(texto) {
+    return texto
+      .normalize("NFD")
+      .replace(/[̀-ͯ]/g, "")
+      .toLowerCase();
+  }
+
+  // Dois níveis de texto por produto, calculados uma única vez (68 itens,
+  // não precisa recalcular a cada tecla):
+  // - "estrutural" (nome/categoria/tags de sintoma) — preciso, é onde a
+  //   busca procura primeiro.
+  // - "completo" (+ desc/descLonga) — usado só quando o nível estrutural
+  //   não acha nada, pra aumentar o alcance sem confundir "óleos
+  //   essenciais" com um óleo vegetal que só cita "ácidos graxos
+  //   essenciais" (nutriente) na descrição.
+  const indice = produtos.map((produto) => {
+    const estrutural = normalizar([produto.nome, produto.cat, ...produto.doencas].join(" "));
+    const completo = normalizar(estrutural + " " + produto.desc + " " + (produto.descLonga || ""));
+    return { produto, estrutural, completo };
+  });
+
+  function buscar(query) {
+    const termos = normalizar(query).split(/\s+/).filter(Boolean);
+    if (termos.length === 0) return null;
+
+    const bateEm = (campo) => (item) => termos.every((termo) => item[campo].includes(termo));
+
+    const porEstrutura = indice.filter(bateEm("estrutural"));
+    if (porEstrutura.length > 0) return porEstrutura.map(({ produto }) => produto);
+
+    return indice.filter(bateEm("completo")).map(({ produto }) => produto);
+  }
+
+  function renderizar(query) {
+    const bruto = query.trim();
+
+    if (bruto.length < 2) {
+      dicaEl.hidden = false;
+      vazioEl.hidden = true;
+      resultadosEl.innerHTML = "";
+      return;
+    }
+
+    const encontrados = buscar(bruto);
+    dicaEl.hidden = true;
+
+    if (encontrados.length === 0) {
+      vazioEl.hidden = false;
+      vazioEl.textContent = `Nenhum produto encontrado para "${bruto}".`;
+      resultadosEl.innerHTML = "";
+      return;
+    }
+
+    vazioEl.hidden = true;
+    resultadosEl.innerHTML = encontrados.map(produtoLinhaHTML).join("");
+  }
+
+  function abrirBusca() {
+    input.value = "";
+    dicaEl.hidden = false;
+    vazioEl.hidden = true;
+    resultadosEl.innerHTML = "";
+    overlay.hidden = false;
+    trap.abrir();
+    input.focus();
+  }
+
+  function fecharBusca() {
+    overlay.hidden = true;
+    trap.fechar();
+  }
+
+  fab.addEventListener("click", abrirBusca);
+  fecharBtn.addEventListener("click", fecharBusca);
+  input.addEventListener("input", () => renderizar(input.value));
+
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) fecharBusca();
   });
 })();
 

@@ -23,13 +23,20 @@
       <h1 class="hero__headline">Cotara</h1>
     </div>
 
-    <nav class="pill-nav" aria-label="Navegação principal">
-      <button class="pill-nav__item pill-nav__item--cta" type="button" id="cta-sintoma">O que você está sentindo hoje? →</button>
-      <button class="pill-nav__item" type="button" data-slug="hormonios">Hormônios</button>
-      <button class="pill-nav__item" type="button" data-slug="sono-ansiedade">Sono</button>
-      <button class="pill-nav__item" type="button" data-slug="intestino-digestao">Intestino</button>
-      <button class="pill-nav__item" type="button" data-slug="imunidade-garganta">Imunidade</button>
-    </nav>
+    <div class="hero-busca-grupo">
+      <nav class="pill-nav" aria-label="Navegação principal">
+        <div class="pill-nav__linha pill-nav__linha--principal">
+          <button class="pill-nav__item pill-nav__item--cta" type="button" id="cta-sintoma">O que você está sentindo hoje? →</button>
+        </div>
+        <div class="pill-nav__linha pill-nav__linha--categorias">
+          <button class="pill-nav__item" type="button" data-slug="hormonios">Hormônios</button>
+          <button class="pill-nav__item" type="button" data-slug="sono-ansiedade">Sono</button>
+          <button class="pill-nav__item" type="button" data-slug="intestino-digestao">Intestino</button>
+          <button class="pill-nav__item" type="button" data-slug="imunidade-garganta">Imunidade</button>
+        </div>
+      </nav>
+      <button class="busca-fab" id="busca-fab" type="button" aria-label="Pesquisar produtos">🔍</button>
+    </div>
   </div>
 
   <section class="produtos" id="produtos">
@@ -54,6 +61,22 @@
       </div>
 
       <button class="modal__confirmar" id="modal-confirmar" type="button" disabled>Ver produtos →</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="busca-overlay" hidden>
+    <div class="modal modal--busca" id="busca-modal" role="dialog" aria-modal="true" aria-labelledby="busca-titulo" tabindex="-1">
+      <button class="modal__fechar" id="busca-fechar" type="button" aria-label="Fechar">×</button>
+      <h2 id="busca-titulo" class="modal__titulo">Pesquisar produtos</h2>
+
+      <div class="busca-campo-wrap">
+        <span class="busca-campo__icone" aria-hidden="true">🔍</span>
+        <input type="search" id="busca-input" class="busca-campo" placeholder="Ex.: intestino, óleos essenciais, própolis..." autocomplete="off" aria-label="Pesquisar produtos por nome, categoria ou sintoma">
+      </div>
+
+      <p class="busca-dica" id="busca-dica">Digite pelo menos 2 letras para buscar por nome, categoria ou sintoma.</p>
+      <p class="busca-vazio" id="busca-vazio" hidden></p>
+      <div class="produtos__lista busca-resultados" id="busca-resultados"></div>
     </div>
   </div>
 

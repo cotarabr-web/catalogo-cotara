@@ -132,21 +132,34 @@ img.hero__img {
   overflow-wrap: break-word;
 }
 
-/* ---------- Pílula de navegação ---------- */
+/* ---------- Pílula de navegação ----------
+ * Duas linhas: a de cima é só o CTA de sintoma (funciona como uma "busca
+ * guiada", por isso o texto pediu pra tratar como barra de pesquisa —
+ * ganhou largura total pra reforçar essa leitura); a de baixo são os
+ * atalhos manuais de categoria. A lupa de busca por palavra (busca-fab)
+ * fica de propósito FORA da pílula, grudada por fora — não é uma das duas
+ * linhas, é um botão satélite. */
 
-.pill-nav {
+.hero-busca-grupo {
   position: absolute;
   left: 50%;
   bottom: 8%;
   transform: translateX(-50%);
   z-index: 2;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  width: min(94%, 780px);
+}
+
+.pill-nav {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
   gap: 8px;
-  width: min(92%, 720px);
   padding: 10px;
-  border-radius: 999px;
+  border-radius: 28px;
   background: rgba(255, 255, 255, 0.16);
   backdrop-filter: blur(16px) saturate(160%);
   -webkit-backdrop-filter: blur(16px) saturate(160%);
@@ -155,6 +168,22 @@ img.hero__img {
     0 8px 32px rgba(0, 0, 0, 0.18),
     inset 0 1px 0 rgba(255, 255, 255, 0.4),
     inset 0 -1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.pill-nav__linha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pill-nav__linha--principal {
+  justify-content: stretch;
+}
+
+.pill-nav__linha--categorias {
+  justify-content: center;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 .pill-nav__item {
@@ -180,6 +209,8 @@ img.hero__img {
 }
 
 .pill-nav__item--cta {
+  flex: 1;
+  text-align: left;
   background: var(--verde-salvia);
   color: var(--branco);
   font-weight: 600;
@@ -187,6 +218,37 @@ img.hero__img {
 
 .pill-nav__item--cta:hover {
   background: var(--verde-profundo);
+}
+
+.busca-fab {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.08);
+  color: var(--branco);
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.busca-fab:hover {
+  background: rgba(255, 255, 255, 0.26);
+  transform: translateY(-2px);
+}
+
+.busca-fab:active {
+  transform: translateY(0) scale(0.92);
 }
 
 /* ---------- Lista de produtos ---------- */
@@ -681,6 +743,69 @@ img.hero__img {
   font-size: 0.9rem;
 }
 
+/* ---------- Modal de busca manual ----------
+ * Reaproveita .produtos__lista (grid dos cards) pros resultados — os cards
+ * renderizados (produtoLinhaHTML) já vêm com clique-pra-detalhe, adicionar
+ * e WhatsApp funcionando de graça, os listeners são delegados no document
+ * e não dependem de qual container os cards estão dentro. */
+
+.modal--busca {
+  max-width: 760px;
+}
+
+.busca-campo-wrap {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.busca-campo__icone {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1rem;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.busca-campo {
+  width: 100%;
+  padding: 14px 16px 14px 44px;
+  border: 1px solid rgba(31, 61, 43, 0.16);
+  border-radius: 999px;
+  background: var(--branco);
+  color: var(--texto);
+  font-family: inherit;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.busca-campo:focus-visible {
+  outline: 2px solid var(--verde-salvia);
+  outline-offset: 2px;
+}
+
+.busca-campo::-webkit-search-cancel-button {
+  cursor: pointer;
+}
+
+.busca-dica,
+.busca-vazio {
+  color: var(--texto-suave);
+  font-size: 0.92rem;
+  margin: 0 0 8px;
+}
+
+.busca-resultados {
+  max-height: min(52vh, 520px);
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.busca-resultados:not(:empty) {
+  margin-top: 8px;
+}
+
 /* ---------- Carrinho ---------- */
 
 .cart-fab {
@@ -963,9 +1088,19 @@ img.hero__img {
     padding-top: 10vh;
   }
 
-  .pill-nav {
+  .hero-busca-grupo {
     bottom: 5%;
+    gap: 8px;
+  }
+
+  .pill-nav {
     padding: 8px;
+  }
+
+  .busca-fab {
+    width: 42px;
+    height: 42px;
+    font-size: 1rem;
   }
 
   /* backdrop-filter em 68 cards + painel é o ponto mais caro em celular —
@@ -1049,6 +1184,12 @@ img.hero__img {
 
   .produtos {
     background: rgba(247, 243, 236, 0.97);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .busca-fab {
+    background: rgba(31, 61, 43, 0.88);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
