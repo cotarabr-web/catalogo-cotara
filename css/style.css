@@ -1179,6 +1179,22 @@ img.hero__img {
   box-shadow: none;
 }
 
+/* ---------- Rodapé ----------
+ * Só uma imagem, de propósito — sem texto, sem link, sem botão (pedido
+ * explícito do usuário). z-index:2 pra ficar acima do .site-fundo fixed
+ * na landing (mesma camada do resto do conteúdo); em categoria.html não
+ * tem fundo fixo, então a propriedade não faz diferença ali. */
+.rodape {
+  position: relative;
+  z-index: 2;
+  line-height: 0;
+}
+
+.rodape__imagem {
+  width: 100%;
+  height: auto;
+}
+
 /* ---------- Toast ---------- */
 
 .toast {
