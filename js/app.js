@@ -14,7 +14,7 @@
 function produtoLinhaHTML(produto) {
   return `
     <article class="entrada" data-nome="${produto.nome}">
-      <div class="entrada__img" style="background-image:url('${produto.img}')"></div>
+      <div class="entrada__img"><span style="background-image:url('${produto.img}')"></span></div>
       <div class="entrada__corpo">
         <h3 class="entrada__nome">${produto.nome}</h3>
         <p class="entrada__desc">${produto.desc}</p>
@@ -60,9 +60,47 @@ function renderListaProdutos() {
       ` <span class="produtos__contagem">${ordenados.length} produtos</span>`
     );
   }
+
+  revelarAoEntrarNaTela(".entrada");
+}
+
+/* ---------- Revelação ao rolar (fade só de opacidade) ----------
+ * De propósito só anima opacity, nunca transform — .entrada e
+ * .categoria-painel já usam transform pro hover/active (lift, zoom, o
+ * flex-grow do painel), então misturar um transform de entrada no mesmo
+ * seletor arriscava as duas regras brigarem pela mesma propriedade depois
+ * que o elemento já tivesse aparecido. Chamada de novo depois de qualquer
+ * grid renderizado dinamicamente (aqui e em categoria.js), não é um scan
+ * único no carregamento da página. */
+function revelarAoEntrarNaTela(seletor) {
+  const elementos = document.querySelectorAll(seletor);
+  if (elementos.length === 0) return;
+
+  if (
+    !("IntersectionObserver" in window) ||
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  ) {
+    elementos.forEach((el) => el.classList.add("is-visivel"));
+    return;
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visivel");
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
+  );
+
+  elementos.forEach((el) => observer.observe(el));
 }
 
 renderListaProdutos();
+revelarAoEntrarNaTela(".categoria-painel");
 
 /* ---------- Categorias em destaque (cards abaixo da pílula) ---------- */
 
@@ -412,6 +450,10 @@ function criarFocoTrap(container, aoFechar) {
 
     vazioEl.hidden = true;
     resultadosEl.innerHTML = encontrados.map(produtoLinhaHTML).join("");
+    // aparecem no popup em resposta a digitação, não a rolagem da página —
+    // mostra direto, sem esperar IntersectionObserver (que nem dispararia
+    // certo dentro de um modal já aberto).
+    resultadosEl.querySelectorAll(".entrada").forEach((el) => el.classList.add("is-visivel"));
   }
 
   function abrirBusca() {

@@ -2,9 +2,14 @@
 
 :root {
   --verde-profundo: #1f3d2b;
+  --verde-musgo: #0f1f15;
   --verde-salvia: #7c9473;
   --verde-salvia-claro: #a9bfa0;
   --creme: #f7f3ec;
+  /* tom do vidro do frasco conta-gotas da foto do hero — usado com parcimônia,
+     um único acento quente pra contrastar com o verde, nunca como cor de base */
+  --ambar: #c98a3d;
+  --ambar-suave: #e2b876;
   --texto: #232823;
   --texto-suave: #5c655c;
   --branco: #ffffff;
@@ -250,29 +255,55 @@ img.hero__img {
   z-index: 2;
   max-width: 1160px;
   margin: 0 auto;
-  padding: 0 24px 40px;
+  padding: 0 24px 48px;
+}
+
+.categorias__cabeca {
+  margin: 0 0 24px;
+}
+
+.categorias__titulo {
+  margin: 0 0 6px;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: clamp(1.7rem, 3vw, 2.3rem);
+  color: var(--branco);
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.35);
+}
+
+.categorias__legenda {
+  margin: 0;
+  font-size: 0.98rem;
+  color: rgba(255, 255, 255, 0.82);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.3);
 }
 
 .categorias__paineis {
   display: flex;
   gap: 10px;
   width: 100%;
-  height: 220px;
+  height: 260px;
 }
 
 .categoria-painel {
   position: relative;
   flex: 1;
   min-width: 0;
-  border: none;
-  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 22px;
   overflow: hidden;
   cursor: pointer;
   padding: 0;
   background: linear-gradient(160deg, var(--verde-profundo), #101d14);
   background-size: cover;
   background-position: center;
-  transition: flex 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 0;
+  transition: flex 0.55s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease,
+    box-shadow 0.4s ease, opacity 0.6s ease;
+}
+
+.categoria-painel.is-visivel {
+  opacity: 1;
 }
 
 .categoria-painel::before {
@@ -298,6 +329,8 @@ img.hero__img {
 @media (hover: hover) and (pointer: fine) {
   .categoria-painel:hover {
     flex: 2.4;
+    border-color: rgba(226, 184, 118, 0.55);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
   }
 
   .categoria-painel:hover .categoria-painel__rotulo {
@@ -337,11 +370,27 @@ img.hero__img {
 }
 
 .produtos__titulo {
+  position: relative;
+  display: inline-block;
   font-family: var(--font-serif);
   font-weight: 600;
-  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
   color: var(--verde-profundo);
-  margin: 0 0 32px;
+  margin: 0 0 40px;
+  padding-bottom: 14px;
+}
+
+/* fio de acento em âmbar — o mesmo tom do vidro do frasco, não decoração
+   solta: é a mesma âncora de cor usada no hover dos cards de categoria. */
+.produtos__titulo::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 56px;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--ambar);
 }
 
 .produtos__contagem {
@@ -365,18 +414,23 @@ img.hero__img {
      fundo fixo uma vez por trás de tudo; repetir o blur em cada um dos 68
      cards é o que estourava o orçamento de GPU em mobile (ver seção 4 do
      CLAUDE.md) sem diferença visível — o card só precisa do tom translúcido. */
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.78);
   border: 1px solid rgba(255, 255, 255, 0.6);
-  border-radius: 14px;
+  border-radius: 18px;
   overflow: hidden;
   box-shadow: 0 2px 14px rgba(31, 61, 43, 0.07);
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  opacity: 0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.6s ease;
+}
+
+.entrada.is-visivel {
+  opacity: 1;
 }
 
 .entrada:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 28px rgba(31, 61, 43, 0.14);
+  transform: translateY(-4px);
+  box-shadow: 0 14px 32px rgba(31, 61, 43, 0.16);
 }
 
 .entrada:active {
@@ -385,14 +439,26 @@ img.hero__img {
 
 .entrada__img {
   width: 100%;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
   background-color: var(--verde-salvia-claro);
+}
+
+.entrada__img > span {
+  display: block;
+  width: 100%;
+  height: 100%;
   background-size: cover;
   background-position: center;
+  transition: transform 0.4s ease;
+}
+
+.entrada:hover .entrada__img > span {
+  transform: scale(1.06);
 }
 
 .entrada__corpo {
-  padding: 16px;
+  padding: 18px;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -402,15 +468,17 @@ img.hero__img {
 .entrada__nome {
   font-family: var(--font-serif);
   font-weight: 600;
-  font-size: 1.02rem;
+  font-size: 1.08rem;
   line-height: 1.3;
   color: var(--texto);
 }
 
 .entrada__preco {
+  display: inline-block;
+  margin-top: 2px;
   font-weight: 700;
-  font-size: 0.95rem;
-  color: var(--verde-profundo);
+  font-size: 0.92rem;
+  color: var(--verde-musgo);
 }
 
 .entrada__desc {

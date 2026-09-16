@@ -43,4 +43,5 @@
       filtrados.length === 1 ? "produto" : "produtos"
     }</span>`
   );
+  revelarAoEntrarNaTela(".entrada");
 })();
